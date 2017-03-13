@@ -1,0 +1,791 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="graphios,nagios,influxdb,grafana," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="却道天凉好个秋" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;#x6982;&amp;#x5FF5;&amp;#x8BF4;&amp;#x660E;Nagios: &amp;#x76D1;&amp;#x63A7;Graphios: &amp;#x8F6C;&amp;#x6362;nagios&amp;#x6570;&amp;#x636E;&amp;#x5230;influxdbInfluxDB: &amp;#x65F6;&amp;#x95F4;&amp;#x5E8F;&amp;#x5217;&amp;#x6570;&amp;#x636E;&amp;#x5E93;Grafana: &amp;#x52">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Graphios、Grafana及Influxdb进行Nagios监控数据可视化">
+<meta property="og:url" content="http://blog.app1905.com/2016/nagios-grafana/index.html">
+<meta property="og:site_name" content="却道天凉好个秋">
+<meta property="og:description" content="&amp;#x6982;&amp;#x5FF5;&amp;#x8BF4;&amp;#x660E;Nagios: &amp;#x76D1;&amp;#x63A7;Graphios: &amp;#x8F6C;&amp;#x6362;nagios&amp;#x6570;&amp;#x636E;&amp;#x5230;influxdbInfluxDB: &amp;#x65F6;&amp;#x95F4;&amp;#x5E8F;&amp;#x5217;&amp;#x6570;&amp;#x636E;&amp;#x5E93;Grafana: &amp;#x52">
+<meta property="og:image" content="http://blog.app1905.com/2016/nagios-grafana/20160811141722.png">
+<meta property="og:updated_time" content="2017-01-05T13:14:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Graphios、Grafana及Influxdb进行Nagios监控数据可视化">
+<meta name="twitter:description" content="&amp;#x6982;&amp;#x5FF5;&amp;#x8BF4;&amp;#x660E;Nagios: &amp;#x76D1;&amp;#x63A7;Graphios: &amp;#x8F6C;&amp;#x6362;nagios&amp;#x6570;&amp;#x636E;&amp;#x5230;influxdbInfluxDB: &amp;#x65F6;&amp;#x95F4;&amp;#x5E8F;&amp;#x5217;&amp;#x6570;&amp;#x636E;&amp;#x5E93;Grafana: &amp;#x52">
+<meta name="twitter:image" content="http://blog.app1905.com/2016/nagios-grafana/20160811141722.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://blog.app1905.com/2016/nagios-grafana/"/>
+
+  <title> 使用Graphios、Grafana及Influxdb进行Nagios监控数据可视化 | 却道天凉好个秋 </title>
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async='async'></script>
+  <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(["init", {
+      appId: "8325979f-613c-45e3-9d4c-85b37ff9355a",
+      autoRegister: true,
+      subdomainName: 'https://app1905.onesignal.com',
+	    notifyButton: {
+          enable: true
+      }
+    }]);
+  </script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-82382124-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">却道天凉好个秋</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Nil</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用Graphios、Grafana及Influxdb进行Nagios监控数据可视化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-11T12:53:11+08:00" content="2016-08-11">
+              2016-08-11
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/nagios/" itemprop="url" rel="index">
+                    <span itemprop="name">nagios</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/nagios-grafana/" class="leancloud_visitors" data-flag-title="使用Graphios、Grafana及Influxdb进行Nagios监控数据可视化">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+        <h2 id="&#x6982;&#x5FF5;&#x8BF4;&#x660E;"><a href="#&#x6982;&#x5FF5;&#x8BF4;&#x660E;" class="headerlink" title="&#x6982;&#x5FF5;&#x8BF4;&#x660E;"></a>&#x6982;&#x5FF5;&#x8BF4;&#x660E;</h2><p>Nagios: &#x76D1;&#x63A7;<br>Graphios: &#x8F6C;&#x6362;nagios&#x6570;&#x636E;&#x5230;influxdb<br>InfluxDB: &#x65F6;&#x95F4;&#x5E8F;&#x5217;&#x6570;&#x636E;&#x5E93;<br>Grafana: &#x524D;&#x7AEF;&#x53EF;&#x89C6;&#x5316;<br><img src="/2016/nagios-grafana/20160811141722.png" alt="&#x6548;&#x679C;&#x56FE;"><br><a id="more"></a></p>
+<h2 id="&#x5B89;&#x88C5;&#x7EC4;&#x4EF6;"><a href="#&#x5B89;&#x88C5;&#x7EC4;&#x4EF6;" class="headerlink" title="&#x5B89;&#x88C5;&#x7EC4;&#x4EF6;"></a>&#x5B89;&#x88C5;&#x7EC4;&#x4EF6;</h2><h3 id="&#x524D;&#x7F6E;&#x6761;&#x4EF6;"><a href="#&#x524D;&#x7F6E;&#x6761;&#x4EF6;" class="headerlink" title="&#x524D;&#x7F6E;&#x6761;&#x4EF6;"></a>&#x524D;&#x7F6E;&#x6761;&#x4EF6;</h3><p>&#x5B89;&#x88C5;Apache&#x3001;PHP&#x73AF;&#x5883;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo yum install httpd php gd gd-devel</div></pre></td></tr></table></figure></p>
+<h3 id="Influxdb"><a href="#Influxdb" class="headerlink" title="Influxdb"></a>Influxdb</h3><p><a href="https://docs.influxdata.com/influxdb/v0.13/introduction/installation/" target="_blank" rel="external">&#x5B98;&#x65B9;&#x94FE;&#x63A5;</a><br>1 &#x914D;&#x7F6E;yum&#x6E90;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ cat &lt;&lt;EOF | sudo tee /etc/yum.repos.d/influxdb.repo</div><div class="line">[influxdb]</div><div class="line">name = InfluxDB Repository - RHEL \<span class="variable">$releasever</span></div><div class="line">baseurl = https://repos.influxdata.com/rhel/\<span class="variable">$releasever</span>/\<span class="variable">$basearch</span>/stable</div><div class="line">enabled = 1</div><div class="line">gpgcheck = 1</div><div class="line">gpgkey = https://repos.influxdata.com/influxdb.key</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>2 &#x5B89;&#x88C5; Influxdb<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ sudo yum install influxdb</div><div class="line">$ sudo systemctl start influxdb</div><div class="line">$ sudo systemctl <span class="built_in">enable</span> influxdb</div></pre></td></tr></table></figure></p>
+<p>&#x9ED8;&#x8BA4;Web&#x7AEF;&#x53E3;&#xFF1A;8083<br>&#x9ED8;&#x8BA4;API&#x7AEF;&#x53E3;&#xFF1A;8086<br>&#x9ED8;&#x8BA4;&#x7528;&#x6237;&#x540D;&#x5BC6;&#x7801;&#xFF1A;root:root<br>&#x6CE8;&#xFF1A;&#x5177;&#x4F53;&#x521B;&#x5EFA;&#x6570;&#x636E;&#x5E93;&#x53C2;&#x8003;<a href="https://docs.influxdata.com/influxdb/v0.13/guides/writing_data/" target="_blank" rel="external">&#x5B98;&#x65B9;&#x6587;&#x6863;</a></p>
+<h3 id="Grafana"><a href="#Grafana" class="headerlink" title="Grafana"></a>Grafana</h3><p><a href="http://docs.grafana.org/installation/rpm/" target="_blank" rel="external">&#x5B98;&#x65B9;&#x94FE;&#x63A5;</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">$ cat &lt;&lt;EOF | sudo tee /etc/yum.repos.d/grafana.repo</div><div class="line">[grafana]</div><div class="line">name=grafana</div><div class="line">baseurl=https://packagecloud.io/grafana/stable/el/\<span class="variable">$releasever</span>/<span class="variable">$basearch</span></div><div class="line">repo_gpgcheck=1</div><div class="line">enabled=1</div><div class="line">gpgcheck=1</div><div class="line">gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana</div><div class="line">sslverify=1</div><div class="line">sslcacert=/etc/pki/tls/certs/ca-bundle.crt</div><div class="line">EOF</div><div class="line">$ sudo yum install grafana</div></pre></td></tr></table></figure></p>
+<p>&#x542F;&#x52A8;&#x670D;&#x52A1;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo systemctl start grafana-server</div><div class="line">$ sudo systemctl <span class="built_in">enable</span> grafana-server</div></pre></td></tr></table></figure></p>
+<h3 id="Nagios"><a href="#Nagios" class="headerlink" title="Nagios"></a>Nagios</h3><p><a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/quickstart-fedora.html" target="_blank" rel="external">&#x5B98;&#x65B9;&#x6E90;&#x7801;&#x65B9;&#x6CD5;</a><br><strong>&#x4F7F;&#x7528;yum&#x5B89;&#x88C5;(&#x672C;&#x6587;&#x65B9;&#x6CD5;)</strong><br>&#x6CE8;&#xFF1A;yum&#x5B89;&#x88C5;&#x4F1A;&#x81EA;&#x52A8;&#x521B;&#x5EFA;nagios&#x7528;&#x6237;&#x53CA;&#x7EC4;&#xFF0C;&#x5E76;&#x5C06;apache&#x7528;&#x6237;&#x52A0;&#x5165;&#x5230;nagios&#x7EC4;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo yum install epel-release</div><div class="line">$ sudo yum install nagios nagios-plugins nagios-plugins-all nagios-plugins-nrpe nrpe</div></pre></td></tr></table></figure></p>
+<p>Nagios Web&#x767B;&#x5F55;<br>&#x8D26;&#x53F7;&#xFF1A;<code>nagiosadmin</code><br>&#x5BC6;&#x7801;&#xFF1A;<code>nagiosadmin</code></p>
+<h3 id="Graphios"><a href="#Graphios" class="headerlink" title="Graphios"></a>Graphios</h3><p><a href="https://github.com/shawn-sterling/graphios" target="_blank" rel="external">Github&#x4ED3;&#x5E93;</a><br>1 &#x5B89;&#x88C5;<br>&#x4EE5;&#x4E0B;&#x65B9;&#x5F0F;Graphios&#x5B89;&#x88C5;&#x4F1A;&#x81EA;&#x52A8;&#x914D;&#x7F6E;Nagios&#xFF0C;&#x4F46;&#x662F;&#x90E8;&#x5206;&#x6587;&#x4EF6;&#x5939;&#x4E0D;&#x4F1A;&#x521B;&#x5EFA;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git <span class="built_in">clone</span> https://github.com/shawn-sterling/graphios.git</div><div class="line">$ <span class="built_in">cd</span> graphios</div><div class="line">$ sudo python setup.py install</div></pre></td></tr></table></figure></p>
+<p>&#x6CE8;&#xFF1A;<code>python setup.py install</code>&#x4E0D;&#x8981;&#x91CD;&#x590D;&#x6267;&#x884C;&#xFF0C;&#x5426;&#x5219;nagios&#x4E2D;graphios&#x7684;command&#x4F1A;&#x91CD;&#x590D;<br>2 &#x521B;&#x5EFA;Graphios&#x76F8;&#x5173;&#x6587;&#x4EF6;&#x5939;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ sudo mkdir -p /usr/<span class="built_in">local</span>/nagios/var/</div><div class="line">$ sudo mkdir -p /var/spool/nagios/graphios</div><div class="line">$ sudo chown nagios:nagios /var/spool/nagios/graphios</div><div class="line">$ sudo chown nagios:nagios /usr/<span class="built_in">local</span>/nagios/var/</div></pre></td></tr></table></figure></p>
+<p>3 &#x914D;&#x7F6E;graphios<br>&#x4FEE;&#x6539;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x7684;influxdb&#x9879;&#xFF0C;&#x5F00;&#x542F;influxdb09<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo vim /etc/graphios/graphios.cfg</div></pre></td></tr></table></figure></p>
+<p>&#x6CE8;&#xFF1A;<code>influxdb0.9</code>&#x4EE5;&#x524D;&#x542F;&#x52A8;influxdb&#xFF0C;&#x4EE5;&#x540E;&#x7684;&#x542F;&#x7528;influxdb09</p>
+<h2 id="&#x542F;&#x52A8;"><a href="#&#x542F;&#x52A8;" class="headerlink" title="&#x542F;&#x52A8;"></a>&#x542F;&#x52A8;</h2><p>&#x542F;&#x52A8;Nagios<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo systemctl start nagios</div></pre></td></tr></table></figure></p>
+<p>&#x542F;&#x52A8;Graphios<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo systemctl start graphios</div></pre></td></tr></table></figure></p>
+<p>&#x6CE8;&#xFF1A;&#x914D;&#x7F6E;Grafana&#x754C;&#x9762;&#x53C2;&#x8003;<a href="http://docs.grafana.org/reference/graph/" target="_blank" rel="external">&#x5B98;&#x65B9;&#x6587;&#x6863;</a></p>
+
+      
+    </div>
+
+    
+    <hr>
+    <div class="copy_right">
+        <p>本文地址：<a href="http://blog.app1905.com/2016/nagios-grafana/" target="_blank" rel="external" style="color: #FF4081;border-bottom: 1px solid #ffe3ed;word-break: break-all;">http://blog.app1905.com/2016/nagios-grafana/</a></p>
+        <p>著作权归本站所有。商业转载请联系获取授权，非商业转载请注明出处。</p>
+        <p><a href="http://blog.app1905.com">@却道天凉好个秋</a></p>
+    </div>
+    <hr>
+    
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/graphios/" rel="tag">#graphios</a>
+          
+            <a href="/tags/nagios/" rel="tag">#nagios</a>
+          
+            <a href="/tags/influxdb/" rel="tag">#influxdb</a>
+          
+            <a href="/tags/grafana/" rel="tag">#grafana</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/httpscert/" rel="prev" title="OpenSSL生成自签名证书">
+                OpenSSL生成自签名证书 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/logo.jpg"
+               alt="app1905" />
+          <p class="site-author-name" itemprop="name">app1905</p>
+          <p class="site-description motion-element" itemprop="description">个人笔记，涉及IT - Golang - OpenStack - Docker - Kubernetes等</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念说明"><span class="nav-number">1.</span> <span class="nav-text">概念说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装组件"><span class="nav-number">2.</span> <span class="nav-text">安装组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前置条件"><span class="nav-number">2.1.</span> <span class="nav-text">前置条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Influxdb"><span class="nav-number">2.2.</span> <span class="nav-text">Influxdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Grafana"><span class="nav-number">2.3.</span> <span class="nav-text">Grafana</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nagios"><span class="nav-number">2.4.</span> <span class="nav-text">Nagios</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Graphios"><span class="nav-number">2.5.</span> <span class="nav-text">Graphios</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动"><span class="nav-number">3.</span> <span class="nav-text">启动</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">app1905</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io" rel="external nofollow">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题修改自-
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" rel="external nofollow">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("hEyeoxg7u776nddP2n05w8yw-gzGzoHsz", "kBuM0qElsw8KlovpW9leCiwW");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
